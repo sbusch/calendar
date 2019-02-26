@@ -3324,6 +3324,8 @@ var DateTHead = function (_React$Component) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export defaultContentRender */
+/* unused harmony export defaultDateRender */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(2);
@@ -3367,6 +3369,25 @@ function afterCurrentMonthYear(current, today) {
 
 function getIdFromDate(date) {
   return 'rc-calendar-' + date.year() + '-' + date.month() + '-' + date.date();
+}
+
+function defaultContentRender(current /* , value */) {
+  return current.date();
+}
+
+function defaultDateRender(current, value, cellProps) {
+  var content = cellProps.contentRender ? cellProps.contentRender(current, value) : defaultContentRender(current, value);
+
+  return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+    'div',
+    {
+      key: cellProps.key,
+      className: cellProps.className,
+      'aria-selected': cellProps.selected,
+      'aria-disabled': cellProps.disabled
+    },
+    content
+  );
 }
 
 var DateTBody = function (_React$Component) {
@@ -3538,22 +3559,13 @@ var DateTBody = function (_React$Component) {
           cls += ' ' + disabledClass;
         }
 
-        var dateHtml = void 0;
-        if (dateRender) {
-          dateHtml = dateRender(current, value);
-        } else {
-          var content = contentRender ? contentRender(current, value) : current.date();
-          dateHtml = __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-            'div',
-            {
-              key: getIdFromDate(current),
-              className: dateClass,
-              'aria-selected': selected,
-              'aria-disabled': disabled
-            },
-            content
-          );
-        }
+        var dateHtml = (dateRender || defaultDateRender)(current, value, {
+          key: getIdFromDate(current),
+          className: dateClass,
+          selected: selected,
+          disabled: disabled,
+          contentRender: contentRender
+        });
 
         dateCells.push(__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
           'td',
@@ -7276,7 +7288,9 @@ Picker.propTypes = {
   placement: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.any,
   value: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
   defaultValue: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
-  align: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object
+  align: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
+  dateRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
+  dateCellContentRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func
 };
 Picker.defaultProps = {
   prefixCls: 'rc-calendar-picker',
@@ -7636,6 +7650,7 @@ var Calendar = function (_React$Component) {
             selectedValue: selectedValue,
             prefixCls: prefixCls,
             dateRender: props.dateRender,
+            contentRender: props.dateCellContentRender,
             onSelect: this.onDateTableSelect,
             disabledDate: disabledDate,
             showWeekNumber: props.showWeekNumber
@@ -7699,6 +7714,7 @@ Calendar.propTypes = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__
   disabledDate: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   disabledTime: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
   dateRender: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
+  dateCellContentRender: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   renderFooter: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   renderSidebar: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   clearIcon: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.node,

@@ -6557,7 +6557,9 @@ Picker.propTypes = {
   placement: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.any,
   value: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
   defaultValue: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
-  align: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object
+  align: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
+  dateRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
+  dateCellContentRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func
 };
 Picker.defaultProps = {
   prefixCls: 'rc-calendar-picker',
@@ -7223,7 +7225,6 @@ var MonthCalendar = function (_React$Component) {
 
 MonthCalendar.propTypes = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __WEBPACK_IMPORTED_MODULE_9__mixin_CalendarMixin__["b" /* calendarMixinPropTypes */], __WEBPACK_IMPORTED_MODULE_10__mixin_CommonMixin__["c" /* propType */], {
   monthCellRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
-  dateCellRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   value: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
   defaultValue: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
   selectedValue: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
