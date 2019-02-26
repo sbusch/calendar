@@ -1159,7 +1159,7 @@ var util = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__);
@@ -1242,6 +1242,306 @@ function mapSelf(children) {
 /***/ }),
 /* 27 */,
 /* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export defaultContentRender */
+/* unused harmony export defaultDateRender */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_prop_types__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_prop_types__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__DateConstants__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__util___ = __webpack_require__(11);
+
+
+
+
+
+
+
+
+
+function isSameDay(one, two) {
+  return one && two && one.isSame(two, 'day');
+}
+
+function beforeCurrentMonthYear(current, today) {
+  if (current.year() < today.year()) {
+    return 1;
+  }
+  return current.year() === today.year() && current.month() < today.month();
+}
+
+function afterCurrentMonthYear(current, today) {
+  if (current.year() > today.year()) {
+    return 1;
+  }
+  return current.year() === today.year() && current.month() > today.month();
+}
+
+function getIdFromDate(date) {
+  return 'rc-calendar-' + date.year() + '-' + date.month() + '-' + date.date();
+}
+
+function defaultContentRender(current /* , value */) {
+  return current.date();
+}
+
+function defaultDateRender(current, value, cellProps) {
+  var content = cellProps.contentRender ? cellProps.contentRender(current, value) : defaultContentRender(current, value);
+
+  return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+    'div',
+    {
+      key: cellProps.key,
+      className: cellProps.className,
+      'aria-selected': cellProps.selected,
+      'aria-disabled': cellProps.disabled
+    },
+    content
+  );
+}
+
+var DateTBody = function (_React$Component) {
+  __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits___default()(DateTBody, _React$Component);
+
+  function DateTBody() {
+    __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, DateTBody);
+
+    return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default()(this, _React$Component.apply(this, arguments));
+  }
+
+  DateTBody.prototype.render = function render() {
+    var props = this.props;
+    var contentRender = props.contentRender,
+        prefixCls = props.prefixCls,
+        selectedValue = props.selectedValue,
+        value = props.value,
+        showWeekNumber = props.showWeekNumber,
+        dateRender = props.dateRender,
+        disabledDate = props.disabledDate,
+        hoverValue = props.hoverValue;
+
+    var iIndex = void 0;
+    var jIndex = void 0;
+    var current = void 0;
+    var dateTable = [];
+    var today = Object(__WEBPACK_IMPORTED_MODULE_7__util___["e" /* getTodayTime */])(value);
+    var cellClass = prefixCls + '-cell';
+    var weekNumberCellClass = prefixCls + '-week-number-cell';
+    var dateClass = prefixCls + '-date';
+    var todayClass = prefixCls + '-today';
+    var selectedClass = prefixCls + '-selected-day';
+    var selectedDateClass = prefixCls + '-selected-date'; // do not move with mouse operation
+    var selectedStartDateClass = prefixCls + '-selected-start-date';
+    var selectedEndDateClass = prefixCls + '-selected-end-date';
+    var inRangeClass = prefixCls + '-in-range-cell';
+    var lastMonthDayClass = prefixCls + '-last-month-cell';
+    var nextMonthDayClass = prefixCls + '-next-month-btn-day';
+    var disabledClass = prefixCls + '-disabled-cell';
+    var firstDisableClass = prefixCls + '-disabled-cell-first-of-row';
+    var lastDisableClass = prefixCls + '-disabled-cell-last-of-row';
+    var lastDayOfMonthClass = prefixCls + '-last-day-of-month';
+    var month1 = value.clone();
+    month1.date(1);
+    var day = month1.day();
+    var lastMonthDiffDay = (day + 7 - value.localeData().firstDayOfWeek()) % 7;
+    // calculate last month
+    var lastMonth1 = month1.clone();
+    lastMonth1.add(0 - lastMonthDiffDay, 'days');
+    var passed = 0;
+
+    for (iIndex = 0; iIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_ROW_COUNT; iIndex++) {
+      for (jIndex = 0; jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT; jIndex++) {
+        current = lastMonth1;
+        if (passed) {
+          current = current.clone();
+          current.add(passed, 'days');
+        }
+        dateTable.push(current);
+        passed++;
+      }
+    }
+    var tableHtml = [];
+    passed = 0;
+
+    for (iIndex = 0; iIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_ROW_COUNT; iIndex++) {
+      var _cx;
+
+      var isCurrentWeek = void 0;
+      var weekNumberCell = void 0;
+      var isActiveWeek = false;
+      var dateCells = [];
+      if (showWeekNumber) {
+        weekNumberCell = __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+          'td',
+          {
+            key: dateTable[passed].week(),
+            role: 'gridcell',
+            className: weekNumberCellClass
+          },
+          dateTable[passed].week()
+        );
+      }
+      for (jIndex = 0; jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT; jIndex++) {
+        var next = null;
+        var last = null;
+        current = dateTable[passed];
+        if (jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT - 1) {
+          next = dateTable[passed + 1];
+        }
+        if (jIndex > 0) {
+          last = dateTable[passed - 1];
+        }
+        var cls = cellClass;
+        var disabled = false;
+        var selected = false;
+
+        if (isSameDay(current, today)) {
+          cls += ' ' + todayClass;
+          isCurrentWeek = true;
+        }
+
+        var isBeforeCurrentMonthYear = beforeCurrentMonthYear(current, value);
+        var isAfterCurrentMonthYear = afterCurrentMonthYear(current, value);
+
+        if (selectedValue && Array.isArray(selectedValue)) {
+          var rangeValue = hoverValue.length ? hoverValue : selectedValue;
+          if (!isBeforeCurrentMonthYear && !isAfterCurrentMonthYear) {
+            var startValue = rangeValue[0];
+            var endValue = rangeValue[1];
+            if (startValue) {
+              if (isSameDay(current, startValue)) {
+                selected = true;
+                isActiveWeek = true;
+                cls += ' ' + selectedStartDateClass;
+              }
+            }
+            if (startValue && endValue) {
+              if (isSameDay(current, endValue)) {
+                selected = true;
+                isActiveWeek = true;
+                cls += ' ' + selectedEndDateClass;
+              } else if (current.isAfter(startValue, 'day') && current.isBefore(endValue, 'day')) {
+                cls += ' ' + inRangeClass;
+              }
+            }
+          }
+        } else if (isSameDay(current, value)) {
+          // keyboard change value, highlight works
+          selected = true;
+          isActiveWeek = true;
+        }
+
+        if (isSameDay(current, selectedValue)) {
+          cls += ' ' + selectedDateClass;
+        }
+
+        if (isBeforeCurrentMonthYear) {
+          cls += ' ' + lastMonthDayClass;
+        }
+
+        if (isAfterCurrentMonthYear) {
+          cls += ' ' + nextMonthDayClass;
+        }
+
+        if (current.clone().endOf('month').date() === current.date()) {
+          cls += ' ' + lastDayOfMonthClass;
+        }
+
+        if (disabledDate) {
+          if (disabledDate(current, value)) {
+            disabled = true;
+
+            if (!last || !disabledDate(last, value)) {
+              cls += ' ' + firstDisableClass;
+            }
+
+            if (!next || !disabledDate(next, value)) {
+              cls += ' ' + lastDisableClass;
+            }
+          }
+        }
+
+        if (selected) {
+          cls += ' ' + selectedClass;
+        }
+
+        if (disabled) {
+          cls += ' ' + disabledClass;
+        }
+
+        var dateHtml = (dateRender || defaultDateRender)(current, value, {
+          key: getIdFromDate(current),
+          className: dateClass,
+          selected: selected,
+          disabled: disabled,
+          contentRender: contentRender
+        });
+
+        dateCells.push(__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+          'td',
+          {
+            key: passed,
+            onClick: disabled ? undefined : props.onSelect.bind(null, current),
+            onMouseEnter: disabled ? undefined : props.onDayHover && props.onDayHover.bind(null, current) || undefined,
+            role: 'gridcell',
+            title: Object(__WEBPACK_IMPORTED_MODULE_7__util___["d" /* getTitleString */])(current),
+            className: cls
+          },
+          dateHtml
+        ));
+
+        passed++;
+      }
+
+      tableHtml.push(__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+        'tr',
+        {
+          key: iIndex,
+          role: 'row',
+          className: __WEBPACK_IMPORTED_MODULE_5_classnames___default()((_cx = {}, _cx[prefixCls + '-current-week'] = isCurrentWeek, _cx[prefixCls + '-active-week'] = isActiveWeek, _cx))
+        },
+        weekNumberCell,
+        dateCells
+      ));
+    }
+    return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
+      'tbody',
+      { className: prefixCls + '-tbody' },
+      tableHtml
+    );
+  };
+
+  return DateTBody;
+}(__WEBPACK_IMPORTED_MODULE_3_react___default.a.Component);
+
+DateTBody.propTypes = {
+  contentRender: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
+  dateRender: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
+  disabledDate: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
+  prefixCls: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.string,
+  selectedValue: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.arrayOf(__WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object)]),
+  value: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object,
+  hoverValue: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.any,
+  showWeekNumber: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.bool
+};
+DateTBody.defaultProps = {
+  hoverValue: []
+};
+/* harmony default export */ __webpack_exports__["a"] = (DateTBody);
+
+/***/ }),
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1617,7 +1917,7 @@ var _initialiseProps = function _initialiseProps() {
 /* harmony default export */ __webpack_exports__["a"] = (Animate);
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1629,8 +1929,8 @@ var _initialiseProps = function _initialiseProps() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__DateTHead__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__DateTBody__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__DateTHead__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__DateTBody__ = __webpack_require__(28);
 
 
 
@@ -1665,7 +1965,7 @@ var DateTable = function (_React$Component) {
 /* harmony default export */ __webpack_exports__["a"] = (DateTable);
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1933,7 +2233,7 @@ var _initialiseProps = function _initialiseProps() {
 /* harmony default export */ __webpack_exports__["a"] = (CalendarHeader);
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1971,7 +2271,7 @@ function TodayButton(_ref) {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2002,7 +2302,7 @@ function OkButton(_ref) {
 }
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2041,7 +2341,7 @@ function TimePickerButton(_ref) {
 }
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2061,8 +2361,8 @@ function TimePickerButton(_ref) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_util_es_Dom_contains__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rc_util_es_Dom_addEventListener__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_util_es_ContainerRender__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_rc_util_es_Portal__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_util_es_ContainerRender__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_rc_util_es_Portal__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11_classnames__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils__ = __webpack_require__(18);
@@ -2799,7 +3099,7 @@ var _initialiseProps = function _initialiseProps() {
 /* harmony default export */ __webpack_exports__["a"] = (Trigger);
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -2996,7 +3296,7 @@ ClassList.prototype.contains = function(name){
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3017,7 +3317,7 @@ exports.default = function (obj, keys) {
 };
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3136,7 +3436,7 @@ ContainerRender.defaultProps = {
 /* harmony default export */ __webpack_exports__["a"] = (ContainerRender);
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3224,7 +3524,7 @@ Portal.propTypes = {
 /* harmony default export */ __webpack_exports__["a"] = (Portal);
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3318,306 +3618,6 @@ var DateTHead = function (_React$Component) {
 }(__WEBPACK_IMPORTED_MODULE_3_react___default.a.Component);
 
 /* harmony default export */ __webpack_exports__["a"] = (DateTHead);
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export defaultContentRender */
-/* unused harmony export defaultDateRender */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_prop_types__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__DateConstants__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__util___ = __webpack_require__(11);
-
-
-
-
-
-
-
-
-
-function isSameDay(one, two) {
-  return one && two && one.isSame(two, 'day');
-}
-
-function beforeCurrentMonthYear(current, today) {
-  if (current.year() < today.year()) {
-    return 1;
-  }
-  return current.year() === today.year() && current.month() < today.month();
-}
-
-function afterCurrentMonthYear(current, today) {
-  if (current.year() > today.year()) {
-    return 1;
-  }
-  return current.year() === today.year() && current.month() > today.month();
-}
-
-function getIdFromDate(date) {
-  return 'rc-calendar-' + date.year() + '-' + date.month() + '-' + date.date();
-}
-
-function defaultContentRender(current /* , value */) {
-  return current.date();
-}
-
-function defaultDateRender(current, value, cellProps) {
-  var content = cellProps.contentRender ? cellProps.contentRender(current, value) : defaultContentRender(current, value);
-
-  return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-    'div',
-    {
-      key: cellProps.key,
-      className: cellProps.className,
-      'aria-selected': cellProps.selected,
-      'aria-disabled': cellProps.disabled
-    },
-    content
-  );
-}
-
-var DateTBody = function (_React$Component) {
-  __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_inherits___default()(DateTBody, _React$Component);
-
-  function DateTBody() {
-    __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, DateTBody);
-
-    return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default()(this, _React$Component.apply(this, arguments));
-  }
-
-  DateTBody.prototype.render = function render() {
-    var props = this.props;
-    var contentRender = props.contentRender,
-        prefixCls = props.prefixCls,
-        selectedValue = props.selectedValue,
-        value = props.value,
-        showWeekNumber = props.showWeekNumber,
-        dateRender = props.dateRender,
-        disabledDate = props.disabledDate,
-        hoverValue = props.hoverValue;
-
-    var iIndex = void 0;
-    var jIndex = void 0;
-    var current = void 0;
-    var dateTable = [];
-    var today = Object(__WEBPACK_IMPORTED_MODULE_7__util___["e" /* getTodayTime */])(value);
-    var cellClass = prefixCls + '-cell';
-    var weekNumberCellClass = prefixCls + '-week-number-cell';
-    var dateClass = prefixCls + '-date';
-    var todayClass = prefixCls + '-today';
-    var selectedClass = prefixCls + '-selected-day';
-    var selectedDateClass = prefixCls + '-selected-date'; // do not move with mouse operation
-    var selectedStartDateClass = prefixCls + '-selected-start-date';
-    var selectedEndDateClass = prefixCls + '-selected-end-date';
-    var inRangeClass = prefixCls + '-in-range-cell';
-    var lastMonthDayClass = prefixCls + '-last-month-cell';
-    var nextMonthDayClass = prefixCls + '-next-month-btn-day';
-    var disabledClass = prefixCls + '-disabled-cell';
-    var firstDisableClass = prefixCls + '-disabled-cell-first-of-row';
-    var lastDisableClass = prefixCls + '-disabled-cell-last-of-row';
-    var lastDayOfMonthClass = prefixCls + '-last-day-of-month';
-    var month1 = value.clone();
-    month1.date(1);
-    var day = month1.day();
-    var lastMonthDiffDay = (day + 7 - value.localeData().firstDayOfWeek()) % 7;
-    // calculate last month
-    var lastMonth1 = month1.clone();
-    lastMonth1.add(0 - lastMonthDiffDay, 'days');
-    var passed = 0;
-
-    for (iIndex = 0; iIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_ROW_COUNT; iIndex++) {
-      for (jIndex = 0; jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT; jIndex++) {
-        current = lastMonth1;
-        if (passed) {
-          current = current.clone();
-          current.add(passed, 'days');
-        }
-        dateTable.push(current);
-        passed++;
-      }
-    }
-    var tableHtml = [];
-    passed = 0;
-
-    for (iIndex = 0; iIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_ROW_COUNT; iIndex++) {
-      var _cx;
-
-      var isCurrentWeek = void 0;
-      var weekNumberCell = void 0;
-      var isActiveWeek = false;
-      var dateCells = [];
-      if (showWeekNumber) {
-        weekNumberCell = __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-          'td',
-          {
-            key: dateTable[passed].week(),
-            role: 'gridcell',
-            className: weekNumberCellClass
-          },
-          dateTable[passed].week()
-        );
-      }
-      for (jIndex = 0; jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT; jIndex++) {
-        var next = null;
-        var last = null;
-        current = dateTable[passed];
-        if (jIndex < __WEBPACK_IMPORTED_MODULE_6__DateConstants__["a" /* default */].DATE_COL_COUNT - 1) {
-          next = dateTable[passed + 1];
-        }
-        if (jIndex > 0) {
-          last = dateTable[passed - 1];
-        }
-        var cls = cellClass;
-        var disabled = false;
-        var selected = false;
-
-        if (isSameDay(current, today)) {
-          cls += ' ' + todayClass;
-          isCurrentWeek = true;
-        }
-
-        var isBeforeCurrentMonthYear = beforeCurrentMonthYear(current, value);
-        var isAfterCurrentMonthYear = afterCurrentMonthYear(current, value);
-
-        if (selectedValue && Array.isArray(selectedValue)) {
-          var rangeValue = hoverValue.length ? hoverValue : selectedValue;
-          if (!isBeforeCurrentMonthYear && !isAfterCurrentMonthYear) {
-            var startValue = rangeValue[0];
-            var endValue = rangeValue[1];
-            if (startValue) {
-              if (isSameDay(current, startValue)) {
-                selected = true;
-                isActiveWeek = true;
-                cls += ' ' + selectedStartDateClass;
-              }
-            }
-            if (startValue && endValue) {
-              if (isSameDay(current, endValue)) {
-                selected = true;
-                isActiveWeek = true;
-                cls += ' ' + selectedEndDateClass;
-              } else if (current.isAfter(startValue, 'day') && current.isBefore(endValue, 'day')) {
-                cls += ' ' + inRangeClass;
-              }
-            }
-          }
-        } else if (isSameDay(current, value)) {
-          // keyboard change value, highlight works
-          selected = true;
-          isActiveWeek = true;
-        }
-
-        if (isSameDay(current, selectedValue)) {
-          cls += ' ' + selectedDateClass;
-        }
-
-        if (isBeforeCurrentMonthYear) {
-          cls += ' ' + lastMonthDayClass;
-        }
-
-        if (isAfterCurrentMonthYear) {
-          cls += ' ' + nextMonthDayClass;
-        }
-
-        if (current.clone().endOf('month').date() === current.date()) {
-          cls += ' ' + lastDayOfMonthClass;
-        }
-
-        if (disabledDate) {
-          if (disabledDate(current, value)) {
-            disabled = true;
-
-            if (!last || !disabledDate(last, value)) {
-              cls += ' ' + firstDisableClass;
-            }
-
-            if (!next || !disabledDate(next, value)) {
-              cls += ' ' + lastDisableClass;
-            }
-          }
-        }
-
-        if (selected) {
-          cls += ' ' + selectedClass;
-        }
-
-        if (disabled) {
-          cls += ' ' + disabledClass;
-        }
-
-        var dateHtml = (dateRender || defaultDateRender)(current, value, {
-          key: getIdFromDate(current),
-          className: dateClass,
-          selected: selected,
-          disabled: disabled,
-          contentRender: contentRender
-        });
-
-        dateCells.push(__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-          'td',
-          {
-            key: passed,
-            onClick: disabled ? undefined : props.onSelect.bind(null, current),
-            onMouseEnter: disabled ? undefined : props.onDayHover && props.onDayHover.bind(null, current) || undefined,
-            role: 'gridcell',
-            title: Object(__WEBPACK_IMPORTED_MODULE_7__util___["d" /* getTitleString */])(current),
-            className: cls
-          },
-          dateHtml
-        ));
-
-        passed++;
-      }
-
-      tableHtml.push(__WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-        'tr',
-        {
-          key: iIndex,
-          role: 'row',
-          className: __WEBPACK_IMPORTED_MODULE_5_classnames___default()((_cx = {}, _cx[prefixCls + '-current-week'] = isCurrentWeek, _cx[prefixCls + '-active-week'] = isActiveWeek, _cx))
-        },
-        weekNumberCell,
-        dateCells
-      ));
-    }
-    return __WEBPACK_IMPORTED_MODULE_3_react___default.a.createElement(
-      'tbody',
-      { className: prefixCls + '-tbody' },
-      tableHtml
-    );
-  };
-
-  return DateTBody;
-}(__WEBPACK_IMPORTED_MODULE_3_react___default.a.Component);
-
-DateTBody.propTypes = {
-  contentRender: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
-  dateRender: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
-  disabledDate: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.func,
-  prefixCls: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.string,
-  selectedValue: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.arrayOf(__WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object)]),
-  value: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.object,
-  hoverValue: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.any,
-  showWeekNumber: __WEBPACK_IMPORTED_MODULE_4_prop_types___default.a.bool
-};
-DateTBody.defaultProps = {
-  hoverValue: []
-};
-/* harmony default export */ __webpack_exports__["a"] = (DateTBody);
 
 /***/ }),
 /* 41 */
@@ -4976,7 +4976,7 @@ $export($export.S + $export.F * !__webpack_require__(75), 'Object', { defineProp
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_align__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rc_animate__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rc_animate__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__PopupInner__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__LazyRenderBox__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils__ = __webpack_require__(18);
@@ -6267,7 +6267,7 @@ AnimateChild.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Event__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_component_classes__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_component_classes__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_component_classes___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_component_classes__);
 
 
@@ -6899,7 +6899,7 @@ PopupInner.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_rc_util_es_KeyCode__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__picker_placements__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_rc_trigger__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_rc_trigger__ = __webpack_require__(35);
 
 
 
@@ -7219,9 +7219,9 @@ var placements = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_lifecycles_compat__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_util_es_KeyCode__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__range_calendar_CalendarPart__ = __webpack_require__(97);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__calendar_TodayButton__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__calendar_OkButton__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__calendar_TimePickerButton__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__calendar_TodayButton__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__calendar_OkButton__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__calendar_TimePickerButton__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__mixin_CommonMixin__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__util__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__util_toTime__ = __webpack_require__(45);
@@ -8092,8 +8092,8 @@ Object(__WEBPACK_IMPORTED_MODULE_8_react_lifecycles_compat__["polyfill"])(RangeC
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_prop_types__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__calendar_CalendarHeader__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__date_DateTable__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__calendar_CalendarHeader__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__date_DateTable__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__date_DateInput__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__util_index__ = __webpack_require__(11);
 
