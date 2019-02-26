@@ -39,6 +39,7 @@ class Picker extends React.Component {
     ]),
     align: PropTypes.object,
     dateRender: PropTypes.func,
+    dateCellContentRender: PropTypes.func,
   }
 
   static defaultProps = {

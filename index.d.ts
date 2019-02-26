@@ -33,6 +33,7 @@ export interface Props {
   disabledDate?: (current: Moment | undefined) => boolean;
   disabledTime?: (current: Moment | undefined) => object;
   dateRender?: (current: Moment, value: Moment) => React.ReactNode;
+  dateCellContentRender?: (current: Moment, value: Moment) => React.ReactNode;
   renderFooter?: () => React.ReactNode;
   renderSidebar?: () => React.ReactNode;
 }

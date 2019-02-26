@@ -49,6 +49,7 @@ class Calendar extends React.Component {
     disabledDate: PropTypes.func,
     disabledTime: PropTypes.any,
     dateRender: PropTypes.func,
+    dateCellContentRender: PropTypes.func,
     renderFooter: PropTypes.func,
     renderSidebar: PropTypes.func,
     clearIcon: PropTypes.node,
@@ -325,6 +326,7 @@ class Calendar extends React.Component {
             selectedValue={selectedValue}
             prefixCls={prefixCls}
             dateRender={props.dateRender}
+            contentRender={props.dateCellContentRender}
             onSelect={this.onDateTableSelect}
             disabledDate={disabledDate}
             showWeekNumber={props.showWeekNumber}

@@ -27,6 +27,7 @@ export default class CalendarPart extends React.Component {
     enablePrev: PropTypes.any,
     clearIcon: PropTypes.node,
     dateRender: PropTypes.func,
+    dateCellContentRender: PropTypes.func,
   }
 
   render() {
@@ -111,6 +112,7 @@ export default class CalendarPart extends React.Component {
               hoverValue={hoverValue}
               selectedValue={selectedValue}
               dateRender={props.dateRender}
+              contentRender={props.dateCellContentRender}
               onSelect={props.onSelect}
               onDayHover={props.onDayHover}
               disabledDate={disabledDate}
