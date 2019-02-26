@@ -118,7 +118,7 @@ http://react-component.github.io/calendar/examples/index.html
         </tr>
         <tr>
           <td>dateRender</td>
-          <td>(current, value) => React.Node</td>
+          <td>(current, value, cellProps) => React.Node</td>
           <td></td>
           <td>date cell (see `dateCellContentRender` for rending cell *contents* only)</td>
         </tr>
@@ -291,7 +291,7 @@ http://react-component.github.io/calendar/examples/index.html
         </tr>
         <tr>
           <td>dateRender</td>
-          <td>(current, value) => React.Node</td>
+          <td>(current, value, cellProps) => React.Node</td>
           <td></td>
           <td>date cell (see `dateCellContentRender` for rending cell *contents* only)</td>
         </tr>

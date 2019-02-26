@@ -32,7 +32,13 @@ export interface Props {
   onPanelChange?: (date: Moment | null, mode: Mode) => void;
   disabledDate?: (current: Moment | undefined) => boolean;
   disabledTime?: (current: Moment | undefined) => object;
-  dateRender?: (current: Moment, value: Moment) => React.ReactNode;
+  dateRender?: (current: Moment, value: Moment, cellProps: {
+    key: string;
+    className: string;
+    selected: boolean;
+    disabled: boolean;
+    contentRender: Props['dateCellContentRender']
+  }) => React.ReactNode;
   dateCellContentRender?: (current: Moment, value: Moment) => React.ReactNode;
   renderFooter?: () => React.ReactNode;
   renderSidebar?: () => React.ReactNode;
