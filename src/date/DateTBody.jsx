@@ -28,6 +28,25 @@ function getIdFromDate(date) {
   return `rc-calendar-${date.year()}-${date.month()}-${date.date()}`;
 }
 
+export function defaultContentRender(current /* , value */) {
+  return current.date();
+}
+
+export function defaultDateRender(current, value, cellProps) {
+  const content = cellProps.contentRender
+                ? cellProps.contentRender(current, value)
+                : defaultContentRender(current, value);
+
+  return (<div
+    key={cellProps.key}
+    className={cellProps.className}
+    aria-selected={cellProps.selected}
+    aria-disabled={cellProps.disabled}
+  >
+    {content}
+  </div>);
+}
+
 export default class DateTBody extends React.Component {
   static propTypes = {
     contentRender: PropTypes.func,
@@ -199,21 +218,17 @@ export default class DateTBody extends React.Component {
           cls += ` ${disabledClass}`;
         }
 
-        let dateHtml;
-        if (dateRender) {
-          dateHtml = dateRender(current, value);
-        } else {
-          const content = contentRender ? contentRender(current, value) : current.date();
-          dateHtml = (
-            <div
-              key={getIdFromDate(current)}
-              className={dateClass}
-              aria-selected={selected}
-              aria-disabled={disabled}
-            >
-              {content}
-            </div>);
-        }
+        const dateHtml = (dateRender || defaultDateRender)(
+          current,
+          value,
+          {
+            key: getIdFromDate(current),
+            className: dateClass,
+            selected,
+            disabled,
+            contentRender,
+          }
+        );
 
         dateCells.push(
           <td
