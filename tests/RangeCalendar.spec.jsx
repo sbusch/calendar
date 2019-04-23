@@ -1,4 +1,4 @@
-/* eslint-disable no-undef, max-len */
+/* eslint-disable no-undef, max-len, react/no-multi-comp */
 import React from 'react';
 import moment from 'moment';
 import { mount, render } from 'enzyme';
@@ -416,6 +416,54 @@ describe('RangeCalendar', () => {
       expect(RangeYearPicker.find('.rc-calendar-year-panel').length).toBe(2);
     });
 
+    it('should work when start time is null in defaultValue', () => {
+      let wrapper = null;
+      wrapper = mount(<RangeCalendar defaultValue={[null, moment().endOf('month')]} />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-month-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+      wrapper = mount(<RangeCalendar />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-year-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+    });
+
+    it('should work when end time is null in defaultValue', () => {
+      let wrapper = null;
+      wrapper = mount(<RangeCalendar defaultValue={[moment().startOf('month'), null]} />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-month-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+      wrapper = mount(<RangeCalendar />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-year-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+    });
+
+    it('should work when start time is undefined in defaultValue', () => {
+      let wrapper = null;
+      wrapper = mount(<RangeCalendar defaultValue={[undefined, moment().endOf('month')]} />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-month-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+      wrapper = mount(<RangeCalendar />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-year-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+    });
+
+    it('should work when end time is undefined in defaultValue', () => {
+      let wrapper = null;
+      wrapper = mount(<RangeCalendar defaultValue={[moment().startOf('month'), undefined]} />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-month-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+      wrapper = mount(<RangeCalendar />);
+      wrapper.find('.rc-calendar-range-right .rc-calendar-year-select').simulate('click');
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-year-btn').length).toBe(1);
+      expect(wrapper.find('.rc-calendar-range-left .rc-calendar-next-month-btn').length).toBe(1);
+    });
+
     it('support controlled mode', () => {
       let value = null;
       class ControlledRangeCalendar extends React.Component {
@@ -477,6 +525,41 @@ describe('RangeCalendar', () => {
       wrapper.setProps({ value: [moment(), moment()] });
       const updatedValue = wrapper.state('value');
       expect(updatedValue[0].isSame(updatedValue[1], 'month')).toBe(true);
+    });
+
+    // https://github.com/ant-design/ant-design/issues/15659
+    it('controlled value works correctly with mode', () => {
+      class Demo extends React.Component {
+        state = {
+          mode: ['month', 'month'],
+          value: [moment().add(-1, 'day'), moment()],
+        };
+
+        handlePanelChange = (value, mode) => {
+          this.setState({
+            value,
+            mode: [mode[0] === 'date' ? 'month' : mode[0], mode[1] === 'date' ? 'month' : mode[1]],
+          });
+        };
+
+        render() {
+          return (
+            <RangeCalendar
+              value={this.state.value}
+              selectedValue={this.state.value}
+              mode={this.state.mode}
+              onPanelChange={this.handlePanelChange}
+            />
+          );
+        }
+      }
+
+      const wrapper = mount(<Demo />);
+      wrapper.find('.rc-calendar-month-panel-year-select').first().simulate('click');
+      wrapper.find('.rc-calendar-year-panel-cell').at(1).simulate('click');
+      expect(
+        wrapper.find('.rc-calendar-month-panel-year-select-content').first(0).text()
+      ).toBe('2010');
     });
   });
 
@@ -646,5 +729,27 @@ describe('RangeCalendar', () => {
       keyCode: keyCode.ENTER,
     });
     expect(onSelect.mock.calls[1][1].source).toEqual('dateInputSelect');
+  });
+
+  it('date mode should not display same month', () => {
+    const FORMAT = 'YYYY-MM-DD';
+    const sameDay = moment('2000-01-01');
+    const wrapper = mount(<RangeCalendar defaultValue={[sameDay, sameDay]} />);
+
+    // Should in different month
+    expect(wrapper.find('CalendarPart').at(0).props().value.format(FORMAT)).toEqual('2000-01-01');
+    expect(wrapper.find('CalendarPart').at(1).props().value.format(FORMAT)).toEqual('2000-02-01');
+
+    // Back end to month panel
+    wrapper.find('CalendarPart').at(1).find('.rc-calendar-month-select').simulate('click');
+    wrapper.find('CalendarPart').at(1).find('.rc-calendar-month-panel-month').at(0).simulate('click');
+    expect(wrapper.find('CalendarPart').at(0).props().value.format(FORMAT)).toEqual('1999-12-01');
+    expect(wrapper.find('CalendarPart').at(1).props().value.format(FORMAT)).toEqual('2000-01-01');
+
+    // Back start to month panel
+    wrapper.find('CalendarPart').at(0).find('.rc-calendar-month-select').simulate('click');
+    wrapper.find('CalendarPart').at(0).find('.rc-calendar-month-panel-month').at(0).simulate('click');
+    expect(wrapper.find('CalendarPart').at(0).props().value.format(FORMAT)).toEqual('2000-01-01');
+    expect(wrapper.find('CalendarPart').at(1).props().value.format(FORMAT)).toEqual('2000-02-01');
   });
 });

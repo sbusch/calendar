@@ -38,6 +38,7 @@ class Picker extends React.Component {
       PropTypes.array,
     ]),
     align: PropTypes.object,
+    onBlur: PropTypes.func,
     dateRender: PropTypes.func,
     dateCellContentRender: PropTypes.func,
   }
@@ -50,6 +51,7 @@ class Picker extends React.Component {
     defaultOpen: false,
     onChange: noop,
     onOpenChange: noop,
+    onBlur: noop,
   }
 
   constructor(props) {
@@ -120,6 +122,10 @@ class Picker extends React.Component {
     this.close(this.focus);
   }
 
+  onCalendarBlur = () => {
+    this.setOpen(false);
+  }
+
   onVisibleChange = (open) => {
     this.setOpen(open);
   }
@@ -150,6 +156,7 @@ class Picker extends React.Component {
       onOk: createChainedFunction(calendarProps.onOk, this.onCalendarOk),
       onSelect: createChainedFunction(calendarProps.onSelect, this.onCalendarSelect),
       onClear: createChainedFunction(calendarProps.onClear, this.onCalendarClear),
+      onBlur: createChainedFunction(calendarProps.onBlur, this.onCalendarBlur),
     };
 
     return React.cloneElement(props.calendar, extraProps);
