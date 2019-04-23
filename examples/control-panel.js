@@ -1426,11 +1426,15 @@ var DateTBody = function (_React$Component) {
                 cls += ' ' + selectedStartDateClass;
               }
             }
-            if (startValue && endValue) {
+            if (startValue || endValue) {
               if (isSameDay(current, endValue)) {
                 selected = true;
                 isActiveWeek = true;
                 cls += ' ' + selectedEndDateClass;
+              } else if ((startValue === null || startValue === undefined) && current.isBefore(endValue, 'day')) {
+                cls += ' ' + inRangeClass;
+              } else if ((endValue === null || endValue === undefined) && current.isAfter(startValue, 'day')) {
+                cls += ' ' + inRangeClass;
               } else if (current.isAfter(startValue, 'day') && current.isBefore(endValue, 'day')) {
                 cls += ' ' + inRangeClass;
               }
@@ -6749,7 +6753,8 @@ var calendarMixinWrapper = function calendarMixinWrapper(ComposeComponent) {
             className: '' + __WEBPACK_IMPORTED_MODULE_5_classnames___default()(className),
             style: _this.props.style,
             tabIndex: '0',
-            onKeyDown: _this.onKeyDown
+            onKeyDown: _this.onKeyDown,
+            onBlur: _this.onBlur
           },
           newProps.children
         );
@@ -7241,7 +7246,8 @@ Calendar.propTypes = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__
   renderFooter: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   renderSidebar: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
   clearIcon: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.node,
-  focusablePanel: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool
+  focusablePanel: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
+  onBlur: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func
 });
 Calendar.defaultProps = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, __WEBPACK_IMPORTED_MODULE_12__mixin_CalendarMixin__["a" /* calendarMixinDefaultProps */], __WEBPACK_IMPORTED_MODULE_13__mixin_CommonMixin__["b" /* defaultProp */], {
   showToday: true,
@@ -7375,6 +7381,22 @@ var _initialiseProps = function _initialiseProps() {
     _this2.onSelect(now, {
       source: 'todayButton'
     });
+  };
+
+  this.onBlur = function (event) {
+    setTimeout(function () {
+      var dateInput = __WEBPACK_IMPORTED_MODULE_14__date_DateInput__["a" /* default */].getInstance();
+      var rootInstance = _this2.rootInstance;
+
+      if (!rootInstance || rootInstance.contains(document.activeElement) || dateInput && dateInput.contains(document.activeElement)) {
+        // focused element is still part of Calendar
+        return;
+      }
+
+      if (_this2.props.onBlur) {
+        _this2.props.onBlur(event);
+      }
+    }, 0);
   };
 
   this.getRootDOMNode = function () {
@@ -7570,6 +7592,13 @@ function getValueFromSelectedValue(selectedValue) {
   var start = selectedValue[0],
       end = selectedValue[1];
 
+  if (end && (start === undefined || start === null)) {
+    start = end.clone().subtract(1, 'month');
+  }
+
+  if (start && (end === undefined || end === null)) {
+    end = start.clone().add(1, 'month');
+  }
   return [start, end];
 }
 
@@ -7624,7 +7653,8 @@ var RangeCalendar = function (_React$Component) {
       hoverValue: props.hoverValue || [],
       value: value,
       showTimePicker: false,
-      mode: props.mode || ['date', 'date']
+      mode: props.mode || ['date', 'date'],
+      panelTriggerSource: '' // Trigger by which picker panel: 'start' & 'end'
     };
     return _this;
   }
@@ -7642,7 +7672,7 @@ var RangeCalendar = function (_React$Component) {
       newState.prevSelectedValue = nextProps.selectedValue;
     }
     if ('mode' in nextProps && !isArraysEqual(state.mode, nextProps.mode)) {
-      newState = { mode: nextProps.mode };
+      newState.mode = nextProps.mode;
     }
     return newState;
   };
@@ -7700,10 +7730,6 @@ var RangeCalendar = function (_React$Component) {
     var isTodayInView = startValue.year() === thisYear && startValue.month() === thisMonth || endValue.year() === thisYear && endValue.month() === thisMonth;
     var nextMonthOfStart = startValue.clone().add(1, 'months');
     var isClosestMonths = nextMonthOfStart.year() === endValue.year() && nextMonthOfStart.month() === endValue.month();
-
-    // console.warn('Render:', selectedValue.map(t => t.format('YYYY-MM-DD')).join(', '));
-    // console.log('start:', startValue.format('YYYY-MM-DD'));
-    // console.log('end:', endValue.format('YYYY-MM-DD'));
 
     var extraFooter = props.renderFooter();
 
@@ -8164,11 +8190,13 @@ var _initialiseProps = function _initialiseProps() {
         state = _this2.state;
 
     var newMode = [mode, state.mode[1]];
+    var newState = {
+      panelTriggerSource: 'start'
+    };
     if (!('mode' in props)) {
-      _this2.setState({
-        mode: newMode
-      });
+      newState.mode = newMode;
     }
+    _this2.setState(newState);
     var newValue = [value || state.value[0], state.value[1]];
     props.onPanelChange(newValue, newMode);
   };
@@ -8178,34 +8206,50 @@ var _initialiseProps = function _initialiseProps() {
         state = _this2.state;
 
     var newMode = [state.mode[0], mode];
+    var newState = {
+      panelTriggerSource: 'end'
+    };
     if (!('mode' in props)) {
-      _this2.setState({
-        mode: newMode
-      });
+      newState.mode = newMode;
     }
+    _this2.setState(newState);
     var newValue = [state.value[0], value || state.value[1]];
     props.onPanelChange(newValue, newMode);
   };
 
   this.getStartValue = function () {
-    var value = _this2.state.value[0];
-    var selectedValue = _this2.state.selectedValue;
+    var _state4 = _this2.state,
+        selectedValue = _state4.selectedValue,
+        showTimePicker = _state4.showTimePicker,
+        value = _state4.value,
+        mode = _state4.mode,
+        panelTriggerSource = _state4.panelTriggerSource;
+
+    var startValue = value[0];
     // keep selectedTime when select date
     if (selectedValue[0] && _this2.props.timePicker) {
-      value = value.clone();
-      Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[0], value);
+      startValue = startValue.clone();
+      Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[0], startValue);
     }
-    if (_this2.state.showTimePicker && selectedValue[0]) {
-      return selectedValue[0];
+    if (showTimePicker && selectedValue[0]) {
+      startValue = selectedValue[0];
     }
-    return value;
+
+    // Adjust month if date not align
+    if (panelTriggerSource === 'end' && mode[0] === 'date' && mode[1] === 'date' && startValue.isSame(value[1], 'month')) {
+      startValue = startValue.clone().subtract(1, 'month');
+    }
+
+    return startValue;
   };
 
   this.getEndValue = function () {
-    var _state4 = _this2.state,
-        value = _state4.value,
-        selectedValue = _state4.selectedValue,
-        showTimePicker = _state4.showTimePicker;
+    var _state5 = _this2.state,
+        value = _state5.value,
+        selectedValue = _state5.selectedValue,
+        showTimePicker = _state5.showTimePicker,
+        mode = _state5.mode,
+        panelTriggerSource = _state5.panelTriggerSource;
 
     var endValue = value[1] ? value[1].clone() : value[0].clone().add(1, 'month');
     // keep selectedTime when select date
@@ -8213,15 +8257,21 @@ var _initialiseProps = function _initialiseProps() {
       Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[1], endValue);
     }
     if (showTimePicker) {
-      return selectedValue[1] ? selectedValue[1] : _this2.getStartValue();
+      endValue = selectedValue[1] ? selectedValue[1] : _this2.getStartValue();
     }
+
+    // Adjust month if date not align
+    if (panelTriggerSource !== 'end' && mode[0] === 'date' && mode[1] === 'date' && endValue.isSame(value[0], 'month')) {
+      endValue = endValue.clone().add(1, 'month');
+    }
+
     return endValue;
   };
 
   this.getEndDisableTime = function () {
-    var _state5 = _this2.state,
-        selectedValue = _state5.selectedValue,
-        value = _state5.value;
+    var _state6 = _this2.state,
+        selectedValue = _state6.selectedValue,
+        value = _state6.value;
     var disabledTime = _this2.props.disabledTime;
 
     var userSettingDisabledTime = disabledTime(selectedValue, 'end') || {};

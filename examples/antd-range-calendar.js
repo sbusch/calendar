@@ -1426,11 +1426,15 @@ var DateTBody = function (_React$Component) {
                 cls += ' ' + selectedStartDateClass;
               }
             }
-            if (startValue && endValue) {
+            if (startValue || endValue) {
               if (isSameDay(current, endValue)) {
                 selected = true;
                 isActiveWeek = true;
                 cls += ' ' + selectedEndDateClass;
+              } else if ((startValue === null || startValue === undefined) && current.isBefore(endValue, 'day')) {
+                cls += ' ' + inRangeClass;
+              } else if ((endValue === null || endValue === undefined) && current.isAfter(startValue, 'day')) {
+                cls += ' ' + inRangeClass;
               } else if (current.isAfter(startValue, 'day') && current.isBefore(endValue, 'day')) {
                 cls += ' ' + inRangeClass;
               }
@@ -7025,6 +7029,7 @@ Picker.propTypes = {
   value: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
   defaultValue: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array]),
   align: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object,
+  onBlur: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   dateRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   dateCellContentRender: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func
 };
@@ -7035,7 +7040,8 @@ Picker.defaultProps = {
   placement: 'bottomLeft',
   defaultOpen: false,
   onChange: noop,
-  onOpenChange: noop
+  onOpenChange: noop,
+  onBlur: noop
 };
 
 var _initialiseProps = function _initialiseProps() {
@@ -7078,6 +7084,10 @@ var _initialiseProps = function _initialiseProps() {
     _this2.close(_this2.focus);
   };
 
+  this.onCalendarBlur = function () {
+    _this2.setOpen(false);
+  };
+
   this.onVisibleChange = function (open) {
     _this2.setOpen(open);
   };
@@ -7096,7 +7106,8 @@ var _initialiseProps = function _initialiseProps() {
       onKeyDown: _this2.onCalendarKeyDown,
       onOk: Object(__WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__["a" /* default */])(calendarProps.onOk, _this2.onCalendarOk),
       onSelect: Object(__WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__["a" /* default */])(calendarProps.onSelect, _this2.onCalendarSelect),
-      onClear: Object(__WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__["a" /* default */])(calendarProps.onClear, _this2.onCalendarClear)
+      onClear: Object(__WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__["a" /* default */])(calendarProps.onClear, _this2.onCalendarClear),
+      onBlur: Object(__WEBPACK_IMPORTED_MODULE_7_rc_util_es_createChainedFunction__["a" /* default */])(calendarProps.onBlur, _this2.onCalendarBlur)
     };
 
     return __WEBPACK_IMPORTED_MODULE_3_react___default.a.cloneElement(props.calendar, extraProps);
@@ -7273,6 +7284,13 @@ function getValueFromSelectedValue(selectedValue) {
   var start = selectedValue[0],
       end = selectedValue[1];
 
+  if (end && (start === undefined || start === null)) {
+    start = end.clone().subtract(1, 'month');
+  }
+
+  if (start && (end === undefined || end === null)) {
+    end = start.clone().add(1, 'month');
+  }
   return [start, end];
 }
 
@@ -7327,7 +7345,8 @@ var RangeCalendar = function (_React$Component) {
       hoverValue: props.hoverValue || [],
       value: value,
       showTimePicker: false,
-      mode: props.mode || ['date', 'date']
+      mode: props.mode || ['date', 'date'],
+      panelTriggerSource: '' // Trigger by which picker panel: 'start' & 'end'
     };
     return _this;
   }
@@ -7345,7 +7364,7 @@ var RangeCalendar = function (_React$Component) {
       newState.prevSelectedValue = nextProps.selectedValue;
     }
     if ('mode' in nextProps && !isArraysEqual(state.mode, nextProps.mode)) {
-      newState = { mode: nextProps.mode };
+      newState.mode = nextProps.mode;
     }
     return newState;
   };
@@ -7403,10 +7422,6 @@ var RangeCalendar = function (_React$Component) {
     var isTodayInView = startValue.year() === thisYear && startValue.month() === thisMonth || endValue.year() === thisYear && endValue.month() === thisMonth;
     var nextMonthOfStart = startValue.clone().add(1, 'months');
     var isClosestMonths = nextMonthOfStart.year() === endValue.year() && nextMonthOfStart.month() === endValue.month();
-
-    // console.warn('Render:', selectedValue.map(t => t.format('YYYY-MM-DD')).join(', '));
-    // console.log('start:', startValue.format('YYYY-MM-DD'));
-    // console.log('end:', endValue.format('YYYY-MM-DD'));
 
     var extraFooter = props.renderFooter();
 
@@ -7867,11 +7882,13 @@ var _initialiseProps = function _initialiseProps() {
         state = _this2.state;
 
     var newMode = [mode, state.mode[1]];
+    var newState = {
+      panelTriggerSource: 'start'
+    };
     if (!('mode' in props)) {
-      _this2.setState({
-        mode: newMode
-      });
+      newState.mode = newMode;
     }
+    _this2.setState(newState);
     var newValue = [value || state.value[0], state.value[1]];
     props.onPanelChange(newValue, newMode);
   };
@@ -7881,34 +7898,50 @@ var _initialiseProps = function _initialiseProps() {
         state = _this2.state;
 
     var newMode = [state.mode[0], mode];
+    var newState = {
+      panelTriggerSource: 'end'
+    };
     if (!('mode' in props)) {
-      _this2.setState({
-        mode: newMode
-      });
+      newState.mode = newMode;
     }
+    _this2.setState(newState);
     var newValue = [state.value[0], value || state.value[1]];
     props.onPanelChange(newValue, newMode);
   };
 
   this.getStartValue = function () {
-    var value = _this2.state.value[0];
-    var selectedValue = _this2.state.selectedValue;
+    var _state4 = _this2.state,
+        selectedValue = _state4.selectedValue,
+        showTimePicker = _state4.showTimePicker,
+        value = _state4.value,
+        mode = _state4.mode,
+        panelTriggerSource = _state4.panelTriggerSource;
+
+    var startValue = value[0];
     // keep selectedTime when select date
     if (selectedValue[0] && _this2.props.timePicker) {
-      value = value.clone();
-      Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[0], value);
+      startValue = startValue.clone();
+      Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[0], startValue);
     }
-    if (_this2.state.showTimePicker && selectedValue[0]) {
-      return selectedValue[0];
+    if (showTimePicker && selectedValue[0]) {
+      startValue = selectedValue[0];
     }
-    return value;
+
+    // Adjust month if date not align
+    if (panelTriggerSource === 'end' && mode[0] === 'date' && mode[1] === 'date' && startValue.isSame(value[1], 'month')) {
+      startValue = startValue.clone().subtract(1, 'month');
+    }
+
+    return startValue;
   };
 
   this.getEndValue = function () {
-    var _state4 = _this2.state,
-        value = _state4.value,
-        selectedValue = _state4.selectedValue,
-        showTimePicker = _state4.showTimePicker;
+    var _state5 = _this2.state,
+        value = _state5.value,
+        selectedValue = _state5.selectedValue,
+        showTimePicker = _state5.showTimePicker,
+        mode = _state5.mode,
+        panelTriggerSource = _state5.panelTriggerSource;
 
     var endValue = value[1] ? value[1].clone() : value[0].clone().add(1, 'month');
     // keep selectedTime when select date
@@ -7916,15 +7949,21 @@ var _initialiseProps = function _initialiseProps() {
       Object(__WEBPACK_IMPORTED_MODULE_15__util__["h" /* syncTime */])(selectedValue[1], endValue);
     }
     if (showTimePicker) {
-      return selectedValue[1] ? selectedValue[1] : _this2.getStartValue();
+      endValue = selectedValue[1] ? selectedValue[1] : _this2.getStartValue();
     }
+
+    // Adjust month if date not align
+    if (panelTriggerSource !== 'end' && mode[0] === 'date' && mode[1] === 'date' && endValue.isSame(value[0], 'month')) {
+      endValue = endValue.clone().add(1, 'month');
+    }
+
     return endValue;
   };
 
   this.getEndDisableTime = function () {
-    var _state5 = _this2.state,
-        selectedValue = _state5.selectedValue,
-        value = _state5.value;
+    var _state6 = _this2.state,
+        selectedValue = _state6.selectedValue,
+        value = _state6.value;
     var disabledTime = _this2.props.disabledTime;
 
     var userSettingDisabledTime = disabledTime(selectedValue, 'end') || {};

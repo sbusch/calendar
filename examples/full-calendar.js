@@ -1408,11 +1408,15 @@ var DateTBody = function (_React$Component) {
                 cls += ' ' + selectedStartDateClass;
               }
             }
-            if (startValue && endValue) {
+            if (startValue || endValue) {
               if (isSameDay(current, endValue)) {
                 selected = true;
                 isActiveWeek = true;
                 cls += ' ' + selectedEndDateClass;
+              } else if ((startValue === null || startValue === undefined) && current.isBefore(endValue, 'day')) {
+                cls += ' ' + inRangeClass;
+              } else if ((endValue === null || endValue === undefined) && current.isAfter(startValue, 'day')) {
+                cls += ' ' + inRangeClass;
               } else if (current.isAfter(startValue, 'day') && current.isBefore(endValue, 'day')) {
                 cls += ' ' + inRangeClass;
               }
@@ -5669,7 +5673,8 @@ var calendarMixinWrapper = function calendarMixinWrapper(ComposeComponent) {
             className: '' + __WEBPACK_IMPORTED_MODULE_5_classnames___default()(className),
             style: _this.props.style,
             tabIndex: '0',
-            onKeyDown: _this.onKeyDown
+            onKeyDown: _this.onKeyDown,
+            onBlur: _this.onBlur
           },
           newProps.children
         );
