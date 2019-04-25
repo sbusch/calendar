@@ -8,6 +8,16 @@ import { Moment } from 'moment';
 
 export type Mode = 'time' | 'date' | 'month' | 'year' | 'decade';
 
+export type CellContentRenderer = (current: Moment, value: Moment) => React.ReactNode;
+
+export type DateRenderer = (current: Moment, value: Moment, cellProps: {
+  key: string;
+  className: string;
+  selected: boolean;
+  disabled: boolean;
+  contentRender?: CellContentRenderer;
+}) => React.ReactNode;
+
 export interface Props {
   prefixCls?: string;
   className?: string;
@@ -32,16 +42,13 @@ export interface Props {
   onPanelChange?: (date: Moment | null, mode: Mode) => void;
   disabledDate?: (current: Moment | undefined) => boolean;
   disabledTime?: (current: Moment | undefined) => object;
-  dateRender?: (current: Moment, value: Moment, cellProps: {
-    key: string;
-    className: string;
-    selected: boolean;
-    disabled: boolean;
-    contentRender: Props['dateCellContentRender']
-  }) => React.ReactNode;
-  dateCellContentRender?: (current: Moment, value: Moment) => React.ReactNode;
+  dateRender?: DateRenderer;
+  dateCellContentRender?: CellContentRenderer;
   renderFooter?: () => React.ReactNode;
   renderSidebar?: () => React.ReactNode;
 }
+
+export const defaultDateRender: DateRenderer;
+export const defaultContentRender: CellContentRenderer;
 
 export default class ReactCalendar extends React.Component<Props> {}
