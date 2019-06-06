@@ -463,7 +463,7 @@ function (_React$Component2) {
         style: {
           marginBottom: 10
         }
-      }, "Accepts multiple input formats", react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("small", null, multiFormats.join(', '))), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(rc_calendar__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }, "Accepts multiple input formats", react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("small", null, multiFormats.join(', ')), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null)), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(rc_calendar__WEBPACK_IMPORTED_MODULE_4__["default"], {
         locale: cn ? rc_calendar_src_locale_zh_CN__WEBPACK_IMPORTED_MODULE_6__["default"] : rc_calendar_src_locale_en_US__WEBPACK_IMPORTED_MODULE_7__["default"],
         style: {
           zIndex: 1000

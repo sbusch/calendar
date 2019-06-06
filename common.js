@@ -46046,7 +46046,8 @@ function (_React$Component) {
           timePicker = props.timePicker,
           disabledTime = props.disabledTime,
           clearIcon = props.clearIcon,
-          renderFooter = props.renderFooter;
+          renderFooter = props.renderFooter,
+          inputMode = props.inputMode;
       var value = state.value,
           selectedValue = state.selectedValue,
           mode = state.mode;
@@ -46086,7 +46087,8 @@ function (_React$Component) {
         selectedValue: selectedValue,
         onChange: this.onDateInputChange,
         onSelect: this.onDateInputSelect,
-        clearIcon: clearIcon
+        clearIcon: clearIcon,
+        inputMode: inputMode
       }) : null;
       var children = [];
 
@@ -46209,6 +46211,7 @@ _defineProperty(Calendar, "propTypes", _objectSpread({}, _mixin_CalendarMixin__W
   renderSidebar: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
   clearIcon: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.node,
   focusablePanel: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.bool,
+  inputMode: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
   onBlur: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func
 }));
 
@@ -47380,7 +47383,7 @@ function (_React$Component) {
         onPanelChange: this.onStartPanelChange,
         showDateInput: this.props.showDateInput,
         timePicker: timePicker,
-        showTimePicker: showTimePicker,
+        showTimePicker: showTimePicker || mode[0] === 'time',
         enablePrev: true,
         enableNext: !isClosestMonths || this.isMonthYearPanelShow(mode[1]),
         clearIcon: clearIcon
@@ -47400,7 +47403,7 @@ function (_React$Component) {
         onPanelChange: this.onEndPanelChange,
         showDateInput: this.props.showDateInput,
         timePicker: timePicker,
-        showTimePicker: showTimePicker,
+        showTimePicker: showTimePicker || mode[1] === 'time',
         disabledTime: this.disabledEndTime,
         disabledMonth: this.disabledEndMonth,
         enablePrev: !isClosestMonths || this.isMonthYearPanelShow(mode[0]),
@@ -47461,7 +47464,7 @@ _defineProperty(RangeCalendar, "propTypes", _objectSpread({}, _mixin_CommonMixin
   defaultValue: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   value: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   hoverValue: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
-  mode: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOf(['date', 'month', 'year', 'decade'])),
+  mode: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOf(['time', 'date', 'month', 'year', 'decade'])),
   showDateInput: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
   timePicker: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   showOk: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
@@ -48262,7 +48265,8 @@ function (_React$Component) {
       var locale = props.locale,
           prefixCls = props.prefixCls,
           placeholder = props.placeholder,
-          clearIcon = props.clearIcon;
+          clearIcon = props.clearIcon,
+          inputMode = props.inputMode;
       var invalidClass = invalid ? "".concat(prefixCls, "-input-invalid") : '';
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "".concat(prefixCls, "-input-wrap")
@@ -48277,7 +48281,8 @@ function (_React$Component) {
         onChange: this.onInputChange,
         onKeyDown: this.onKeyDown,
         onFocus: this.onFocus,
-        onBlur: this.onBlur
+        onBlur: this.onBlur,
+        inputMode: inputMode
       })), props.showClear ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         role: "button",
         title: locale.clear,
@@ -48331,7 +48336,8 @@ _defineProperty(DateInput, "propTypes", {
   placeholder: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string,
   onSelect: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.func,
   selectedValue: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.object,
-  clearIcon: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.node
+  clearIcon: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.node,
+  inputMode: prop_types__WEBPACK_IMPORTED_MODULE_2___default.a.string
 });
 
 Object(react_lifecycles_compat__WEBPACK_IMPORTED_MODULE_4__["polyfill"])(DateInput);
@@ -49914,7 +49920,8 @@ function (_React$Component) {
           onInputSelect = props.onInputSelect,
           enablePrev = props.enablePrev,
           enableNext = props.enableNext,
-          clearIcon = props.clearIcon;
+          clearIcon = props.clearIcon,
+          inputMode = props.inputMode;
       var shouldShowTimePicker = showTimePicker && timePicker;
       var disabledTimeConfig = shouldShowTimePicker && disabledTime ? Object(_util_index__WEBPACK_IMPORTED_MODULE_5__["getTimeConfig"])(selectedValue, disabledTime) : null;
       var rangeClassName = "".concat(prefixCls, "-range");
@@ -49947,7 +49954,8 @@ function (_React$Component) {
         selectedValue: selectedValue[index],
         onChange: onInputChange,
         onSelect: onInputSelect,
-        clearIcon: clearIcon
+        clearIcon: clearIcon,
+        inputMode: inputMode
       });
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "".concat(rangeClassName, "-part ").concat(rangeClassName, "-").concat(direction)
@@ -50004,6 +50012,7 @@ _defineProperty(CalendarPart, "propTypes", {
   enableNext: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   enablePrev: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.any,
   clearIcon: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.node,
+  inputMode: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
   dateRender: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
   dateCellContentRender: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func
 });
@@ -50071,6 +50080,7 @@ function syncTime(from, to) {
   to.hour(from.hour());
   to.minute(from.minute());
   to.second(from.second());
+  to.millisecond(from.millisecond());
 }
 function getTimeConfig(value, disabledTime) {
   var disabledTimeConfig = disabledTime ? disabledTime(value) : {};
