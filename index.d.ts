@@ -46,6 +46,7 @@ export interface Props {
   dateCellContentRender?: CellContentRenderer;
   renderFooter?: () => React.ReactNode;
   renderSidebar?: () => React.ReactNode;
+  inputMode?:String
 }
 
 export const defaultDateRender: DateRenderer;
