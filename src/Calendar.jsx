@@ -344,7 +344,7 @@ class Calendar extends React.Component {
           prefixCls={prefixCls}
           monthCellRender={props.monthCellRender}
           monthCellContentRender={props.monthCellContentRender}
-      />
+        />
         {timePicker && showTimePicker ?
           (<div className={`${prefixCls}-time-picker`}>
             <div className={`${prefixCls}-time-picker-panel`}>
