@@ -576,6 +576,38 @@ describe('RangeCalendar', () => {
         wrapper.find('.rc-calendar-month-panel-year-select-content').first(0).text()
       ).toBe('2010');
     });
+
+    // https://github.com/ant-design/ant-design/issues/15659
+    it('selected item style works correctly with mode year', () => {
+      class Demo extends React.Component {
+        state = {
+          value: [moment().add(-1, 'year'), moment()],
+        };
+
+        handlePanelChange = (value) => {
+          this.setState({
+            value,
+          });
+        };
+
+        render() {
+          return (
+            <RangeCalendar
+              value={this.state.value}
+              selectedValue={this.state.value}
+              mode={['year', 'year']}
+              onPanelChange={this.handlePanelChange}
+            />
+          );
+        }
+      }
+
+      const wrapper = mount(<Demo />);
+      wrapper.find('.rc-calendar-year-panel-cell').at(1).simulate('click');
+      expect(
+        wrapper.find('.rc-calendar-year-panel-selected-cell').first(0).text()
+      ).toBe('2010');
+    });
   });
 
   it('can hide date inputs with showDateInput={false}', () => {
@@ -650,11 +682,13 @@ describe('RangeCalendar', () => {
   it('key control', () => {
     const onChange = jest.fn();
     const onSelect = jest.fn();
+    let keyDownEvent = 0;
     const wrapper = mount(
       <RangeCalendar
         defaultSelectedValue={[moment('2000-09-03', format), moment('2000-11-28', format)]}
         onChange={onChange}
         onSelect={onSelect}
+        onKeyDown={() => keyDownEvent = 1}
       />
     );
     expect(wrapper.render()).toMatchSnapshot();
@@ -684,6 +718,9 @@ describe('RangeCalendar', () => {
     // 09-09 right 09-10
     keySimulateCheck(keyCode.RIGHT, 'Sep', 10);
 
+    // 09-10 right 09-03
+    keySimulateCheck(keyCode.UP, 'Sep', 3);
+
     // 09-10 home 09-01
     keySimulateCheck(keyCode.HOME, 'Sep', 1);
 
@@ -695,6 +732,9 @@ describe('RangeCalendar', () => {
 
     // 08-30 page down 09-30
     keySimulateCheck(keyCode.PAGE_DOWN, 'Sep', 30);
+
+    keyDown(keyCode.BACKSLASH);
+    expect(keyDownEvent).toEqual(1);
 
     keyDown(keyCode.ENTER);
 
