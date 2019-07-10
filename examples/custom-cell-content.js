@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import Calendar from 'rc-calendar';
 import RangeCalendar from 'rc-calendar/src/RangeCalendar';
 import FullCalendar from 'rc-calendar/src/FullCalendar';
+import MonthCalendar from 'rc-calendar/src/MonthCalendar';
 import Select from 'rc-select';
 import 'rc-time-picker/assets/index.css';
 
@@ -14,10 +15,7 @@ import defaultContentRender from 'rc-calendar';
 import 'moment/locale/zh-cn';
 import 'moment/locale/en-gb';
 
-// const dateCellContentRender = (current, value) => <span>{defaultContentRender(current, value)}</span>
-const cellContentRender = (mode, current, value) => <span>{mode} D{current.date()}</span>
-
-const dateCellContentRender = (mode, current, value) => <span>D{current.date()}</span>
+const dateCellContentRender = (current, value) => <span>D{current.date()}</span>
 const monthCellContentRender = (current, value) => <span>M{current.month()}</span>
 
 const calendars = ['time', 'date', 'month', 'year', 'decade'].map((mode) => {
@@ -26,8 +24,9 @@ const calendars = ['time', 'date', 'month', 'year', 'decade'].map((mode) => {
       <div key={mode} style={{ clear: 'both', margin: '1em' }}>&lt;Calendar mode="{mode}" /&gt;</div>
       <Calendar
         mode={mode}
-        cellContentRender={cellContentRender}
-      />
+        dateCellContentRender={dateCellContentRender}
+        monthCellContentRender={monthCellContentRender}
+        />
     </div>
   );
 });
@@ -44,21 +43,27 @@ ReactDOM.render((<div
     <div style={{ clear: 'both', margin: '1em' }}>&lt;Calendar /&gt;</div>
     <div style={{ margin: 10 }}>
       <Calendar
-        cellContentRender={cellContentRender}
+        dateCellContentRender={dateCellContentRender}
+        monthCellContentRender={monthCellContentRender}
         />
     </div>
     {calendars}
     <div style={{ clear: 'both', marginTop: '1em' }}>&lt;RangeCalendar /&gt;</div>
     <RangeCalendar
-        cellContentRender={cellContentRender}
+        dateCellContentRender={dateCellContentRender}
+        monthCellContentRender={monthCellContentRender}
         />
     <div style={{ clear: 'both', marginTop: '1em' }}>&lt;FullCalendar /&gt;</div>
     <FullCalendar
-    // FIXME: cellContentRender={cellContentRender}
+      Select={Select}
       dateCellContentRender={dateCellContentRender}
       monthCellContentRender={monthCellContentRender}
-      // onSelect={() => undefined}
-      Select={Select}
+      />
+    <div style={{ clear: 'both', marginTop: '1em' }}>&lt;MonthCalendar /&gt;</div>
+    <MonthCalendar
+      // Select={Select}
+      dateCellContentRender={dateCellContentRender}
+      monthCellContentRender={monthCellContentRender}
       />
   </div>
 </div>), document.getElementById('__react-content'));
