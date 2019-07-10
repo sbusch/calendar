@@ -38,7 +38,6 @@ class Picker extends React.Component {
       PropTypes.array,
     ]),
     align: PropTypes.object,
-    dateRender: PropTypes.func,
     onBlur: PropTypes.func,
     dateRender: PropTypes.func,
     dateCellContentRender: PropTypes.func,
