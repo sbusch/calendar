@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>antd-calendar.js - example - rc-calendar@9.15.0-obg.1</title>
+  <title>antd-calendar.js - example - rc-calendar@9.15.3-obg.2</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,13 +257,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
   }
   </script>
-  <link rel="stylesheet" href="../common.css" />
+  <link rel="stylesheet" href="../common.css" /><link rel="stylesheet" href="antd-calendar.css" />
 </head>
 
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-calendar@9.15.0-obg.1</h1>
+      <h1>rc-calendar@9.15.3-obg.2</h1>
 
       <p>React Calendar</p>
     </div>
@@ -380,9 +380,23 @@ class Demo extends React.Component {
     });
   }
 
-  onReadOnlyFocus = () =&gt; {
+  onFocus = () =&gt; {
+    if (!this.state.open &amp;&amp; this.state.isMouseDown) {
+      // focus from a "click" event, let the picker trigger automatically open the calendar
+      this.setState({
+        isMouseDown: false,
+      });
+    } else {
+      // focus not caused by "click" (such as programmatic or via keyboard)
+      this.setState({
+        open: true,
+      });
+    }
+  }
+
+  onMouseDown = () =&gt; {
     this.setState({
-      open: true,
+      isMouseDown: true,
     });
   }
 
@@ -458,7 +472,7 @@ class Demo extends React.Component {
           {
             ({ value }) =&gt; {
               return (
-                &lt;span tabIndex="0" onFocus={this.onReadOnlyFocus}&gt;
+                &lt;span tabIndex="0" onMouseDown={this.onMouseDown} onFocus={this.onFocus}&gt;
                   &lt;input
                     placeholder="please select"
                     style={{ width: 250 }}
