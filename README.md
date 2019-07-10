@@ -120,7 +120,7 @@ http://react-component.github.io/calendar/examples/index.html
           <td>dateRender</td>
           <td>(current, value, cellProps) => React.Node</td>
           <td></td>
-          <td>date cell (see `dateCellContentRender` for rending cell *contents* only)</td>
+          <td>date cell (see `dateCellContentRender` for rendering cell *contents* only)</td>
         </tr>
         <tr>
           <td>dateCellContentRender</td>
@@ -299,7 +299,7 @@ http://react-component.github.io/calendar/examples/index.html
           <td>dateRender</td>
           <td>(current, value, cellProps) => React.Node</td>
           <td></td>
-          <td>date cell (see `dateCellContentRender` for rending cell *contents* only)</td>
+          <td>date cell (see `dateCellContentRender` for rendering cell *contents* only)</td>
         </tr>
         <tr>
           <td>dateCellContentRender</td>
