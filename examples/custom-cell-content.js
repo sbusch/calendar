@@ -1,69 +1,139 @@
 /* eslint react/no-multi-comp:0, no-console:0 */
 
-import 'rc-calendar/assets/index.less';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Calendar from 'rc-calendar';
-import RangeCalendar from 'rc-calendar/src/RangeCalendar';
-import FullCalendar from 'rc-calendar/src/FullCalendar';
-import MonthCalendar from 'rc-calendar/src/MonthCalendar';
-import Select from 'rc-select';
-import 'rc-time-picker/assets/index.css';
+import "rc-calendar/assets/index.less";
+import React from "react";
+import ReactDOM from "react-dom";
+import Calendar from "rc-calendar";
+import RangeCalendar from "rc-calendar/src/RangeCalendar";
+import FullCalendar from "rc-calendar/src/FullCalendar";
+import MonthCalendar from "rc-calendar/src/MonthCalendar";
+import "rc-select/assets/index.css";
+import Select from "rc-select";
+import "rc-time-picker/assets/index.css";
 
-import 'moment/locale/zh-cn';
-import 'moment/locale/en-gb';
+import "moment/locale/zh-cn";
+import "moment/locale/en-gb";
 
-const dateCellContentRender = (current/* , value */) => <span>D{current.date()}</span>;
-const monthCellContentRender = (current/* , value */) => <span>M{current.month()}</span>;
+const Headline = ({ children: title }) => (
+  <div style={{ clear: "both", margin: "1em" }}>{title}</div>
+);
 
-const Headline = ({ children: title }) =>
-  <div style={{ clear: 'both', margin: '1em' }}>{title}</div>;
+class CustomCellContentExample extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      rendererMode: "content"
+    };
+  }
 
-const calendars = ['time', 'date', 'month', 'year', 'decade'].map((mode) => {
-  return (
-    <div key={mode}>
-      <Headline>&lt;Calendar mode="{mode}" /&gt;</Headline>
-      <Calendar
-        mode={mode}
-        dateCellContentRender={dateCellContentRender}
-        monthCellContentRender={monthCellContentRender}
-      />
-    </div>
+  dateCellRender = () => <div>dCR</div>;
+  dateCellContentRender = (current /* , value */) => (
+    <span>D{current.date()}</span>
   );
-});
 
-ReactDOM.render((<div
-  style={{
-    zIndex: 1000,
-    position: 'relative',
-    width: 900,
-    margin: '20px auto',
-  }}
->
-  <div>
-    <Headline>&lt;Calendar /&gt;</Headline>
-    <div style={{ margin: 10 }}>
-      <Calendar
-        dateCellContentRender={dateCellContentRender}
-        monthCellContentRender={monthCellContentRender}
-      />
-    </div>
-    {calendars}
-    <Headline>&lt;RangeCalendar /&gt;</Headline>
-    <RangeCalendar
-      dateCellContentRender={dateCellContentRender}
-      monthCellContentRender={monthCellContentRender}
-    />
-    <Headline>&lt;FullCalendar /&gt;</Headline>
-    <FullCalendar
-      Select={Select}
-      dateCellContentRender={dateCellContentRender}
-      monthCellContentRender={monthCellContentRender}
-    />
-    <Headline>&lt;MonthCalendar /&gt;</Headline>
-    <MonthCalendar
-      dateCellContentRender={dateCellContentRender}
-      monthCellContentRender={monthCellContentRender}
-    />
-  </div>
-</div>), document.getElementById('__react-content'));
+  monthCellRender = () => <div>mCR</div>;
+  monthCellContentRender = (current /* , value */) => (
+    <span>M{current.month()}</span>
+  );
+
+  toggle = ev => {
+    const nextRendererMode = ev.target.value;
+    this.setState(state => ({
+      ...state,
+      rendererMode: nextRendererMode
+    }));
+  };
+
+  render() {
+    const { rendererMode } = this.state;
+
+    let dateCellRender = undefined;
+    let dateCellContentRender = undefined;
+    let monthCellRender = undefined;
+    let monthCellContentRender = undefined;
+    if (rendererMode === "content") {
+      dateCellContentRender = this.dateCellContentRender;
+      monthCellContentRender = this.monthCellContentRender;
+    } else {
+      // rendererMode is 'cell'
+      dateCellRender = this.dateCellRender;
+      monthCellRender = this.monthCellRender;
+    }
+
+    return (
+      <div
+        style={{
+          zIndex: 1000,
+          position: "relative",
+          width: 900,
+          margin: "20px auto"
+        }}
+      >
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          <li>
+            <input
+              id="content"
+              type="radio"
+              name="mode"
+              value="content"
+              checked={this.state.rendererMode === "content"}
+              onChange={this.toggle}
+            />{" "}
+            <label htmlFor="content">
+              content renderers: <tt>dateCellContentRender</tt> and{" "}
+              <tt>monthCellContentRender</tt>
+            </label>
+          </li>{" "}
+          <li>
+            <input
+              id="cell"
+              type="radio"
+              name="mode"
+              value="cell"
+              checked={this.state.rendererMode === "cell"}
+              onChange={this.toggle}
+            />{" "}
+            <label htmlFor="cell">
+              cell renderers: <tt>dateCellRender/dateRender</tt> and{" "}
+              <tt>monthCellRender</tt>
+            </label>
+          </li>
+        </ul>
+        <Headline>&lt;Calendar /&gt;</Headline>
+        <Calendar
+          dateRender={dateCellRender}
+          dateCellContentRender={dateCellContentRender}
+          monthCellRender={monthCellRender}
+          monthCellContentRender={monthCellContentRender}
+        />
+
+        <Headline>&lt;RangeCalendar /&gt;</Headline>
+        <RangeCalendar
+          dateRender={dateCellRender}
+          dateCellContentRender={dateCellContentRender}
+          monthCellRender={monthCellRender}
+          monthCellContentRender={monthCellContentRender}
+        />
+
+        <Headline>&lt;FullCalendar /&gt;</Headline>
+        <FullCalendar
+          Select={Select}
+          dateCellRender={dateCellRender}
+          dateCellContentRender={dateCellContentRender}
+          monthCellRender={monthCellRender}
+          monthCellContentRender={monthCellContentRender}
+        />
+        <Headline>&lt;MonthCalendar /&gt;</Headline>
+        <MonthCalendar
+          monthCellRender={monthCellRender}
+          monthCellContentRender={monthCellContentRender}
+        />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <CustomCellContentExample />,
+  document.getElementById("__react-content")
+);

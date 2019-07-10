@@ -104,6 +104,8 @@ export default class CalendarPart extends React.Component {
             onValueChange={props.onValueChange}
             onPanelChange={props.onPanelChange}
             disabledMonth={props.disabledMonth}
+            monthCellRender={props.monthCellRender}
+            monthCellContentRender={props.monthCellContentRender}
           />
           {showTimePicker ? <div className={`${prefixCls}-time-picker`}>
             <div className={`${prefixCls}-time-picker-panel`}>
