@@ -7524,7 +7524,7 @@ var RangeCalendar = function (_React$Component) {
               text: locale.backToToday
             })) : null,
             props.timePicker ? __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_13__calendar_TimePickerButton__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props, {
-              showTimePicker: showTimePicker,
+              showTimePicker: showTimePicker || mode[0] === 'time' && mode[1] === 'time',
               onOpenTimePicker: this.onOpenTimePicker,
               onCloseTimePicker: this.onCloseTimePicker,
               timePickerDisabled: !this.hasSelectedValue() || hoverValue.length
