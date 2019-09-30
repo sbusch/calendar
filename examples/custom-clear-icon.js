@@ -3156,7 +3156,7 @@ RangeCalendar.propTypes = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_exte
   onValueChange: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   onHoverChange: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   onPanelChange: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
-  format: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.string]),
+  format: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.string, __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.arrayOf(__WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.string)]),
   onClear: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
   type: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.any,
   disabledDate: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
