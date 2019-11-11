@@ -7516,7 +7516,9 @@ var Calendar = function (_React$Component) {
         disabledTime = props.disabledTime,
         clearIcon = props.clearIcon,
         renderFooter = props.renderFooter,
-        inputMode = props.inputMode;
+        inputMode = props.inputMode,
+        monthCellRender = props.monthCellRender,
+        monthCellContentRender = props.monthCellContentRender;
     var value = state.value,
         selectedValue = state.selectedValue,
         mode = state.mode;
@@ -7585,8 +7587,8 @@ var Calendar = function (_React$Component) {
           renderFooter: renderFooter,
           showTimePicker: showTimePicker,
           prefixCls: prefixCls,
-          monthCellRender: props.monthCellRender,
-          monthCellContentRender: props.monthCellContentRender
+          monthCellRender: monthCellRender,
+          monthCellContentRender: monthCellContentRender
         }),
         timePicker && showTimePicker ? __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
           'div',
