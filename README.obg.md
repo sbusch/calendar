@@ -4,6 +4,7 @@ nvm use 10
 git fetch --all --tags -p
 
 git merge 9.13.1
+Achtung! Wenn branch statt tag merged werden soll, dann muss zur Zeit 9.x branch merged werden (master zeigt auf 10.x ff)
 
 # conflits resolven
 # version in package.json setzen, bspwl. 9.13.1-obg.1
